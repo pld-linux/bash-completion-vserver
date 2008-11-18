@@ -26,7 +26,7 @@
 
 have vserver-info && {
 
-: ${UTIL_VSERVER_VARS:=$(vserver-info - SYSINFO | grep prefix: | awk '{ print $2}')/$(test -d /lib64 && echo lib64 || echo lib)/util-vserver/util-vserver-vars)}
+: ${UTIL_VSERVER_VARS:=$(vserver-info - SYSINFO | awk '/prefix:/{ print $2}')/$(test -d /lib64 && echo lib64 || echo lib)/util-vserver/util-vserver-vars)}
 test -e "$UTIL_VSERVER_VARS" && {
 
 if [ -z "$_VS_NEWLINE" -o -z "$VS_ALLVSERVERS_ARGS" ]

@@ -20,17 +20,20 @@
 #
 # The latest version of this software can be obtained here:
 #
-# http://linux-vserver.org/Vserver+Completion
+# http://linux-vserver.org/util-vserver:Bash_Completion
 #
-# version 0.4.0
+# version 0.4.1
 
 have vserver-info && {
-: ${UTIL_VSERVER_VARS:=$(vserver-info - SYSINFO |grep prefix: | awk '{ print $2}')/lib/util-vserver/util-vserver-vars}
 
+: ${UTIL_VSERVER_VARS:=$(vserver-info - SYSINFO |grep prefix: | awk '{ print $2}')/lib/util-vserver/util-vserver-vars}
 test -e "$UTIL_VSERVER_VARS" && {
 
+if [ -z "$_VS_NEWLINE" -o -z "$VS_ALLVSERVERS_ARGS" ]
+then
 . "$UTIL_VSERVER_VARS"
 . "$_LIB_FUNCTIONS"
+fi
 
 _vserver() {
 	local cur cmds cmdOpts cmdMethodOpts helpCmds names names_pipe func i j method
@@ -38,7 +41,7 @@ _vserver() {
 	COMPREPLY=()
 	cur=${COMP_WORDS[COMP_CWORD]}
 
-	# find available vServers:
+    # find available v-servers: 
 	# call function getAllVservers in vserver library
 	getAllVservers names
 	names_pipe=`echo ${names[@]} | sed 's/ /|/g'`
@@ -60,20 +63,24 @@ _vserver() {
 
 	# if the previous option is a single option
 	helpCmds='--help|--version'
-	if [[ ${COMP_WORDS[1]} == @($helpCmds) ]] ; then
+    if [[ ${COMP_WORDS[1]} == @($helpCmds) ]] 
+    then
 		return 0
 	fi
 
-	# lookup the vServer name
-	for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )); do
-		if [[ ${COMP_WORDS[i]} == @($names_pipe) ]] ; then
-			# found it!
+    # search a verser's name
+    for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ ))
+    do
+        if [[ ${COMP_WORDS[i]} == @($names_pipe) ]]
+        then
+          # it's found
 			break
 		fi
 	done
 
 	#a vserver has been found
-	if (( $i < ${#COMP_WORDS[@]}-1 )) ; then
+    if (( $i < ${#COMP_WORDS[@]}-1 )) 
+    then 
 		# Show the vserver command without build
 		case "${COMP_WORDS[i+1]}" in
 			start)
@@ -111,7 +118,7 @@ _vserver() {
 		#search the new name of vserver
 		for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
 			if [[ ${COMP_WORDS[i]} == !(vserver|-*) ]] ; then
-				# found it!
+                # it's found
 				break
 			fi
 		done
@@ -140,12 +147,13 @@ _vserver() {
 							COMPREPLY=( $( compgen -W "-d -m -s --" -- $cur ) )
 							;;
 						*)
+                            #do nothing 
+                            #the method is not defined
 							;;
 					esac
 					return 0
 					break
 				fi
-
 				if [[ ${COMP_WORDS[j]} == @(build|-m) ]];  then
 					i=$j
 					if (( $j+1 < ${#COMP_WORDS[@]}-1 )) ; then
@@ -157,6 +165,7 @@ _vserver() {
 			if (( $i < ${#COMP_WORDS[@]}-1 )) ; then
 				case $prev in
 					--help)
+                        #do nothing
 						;;
 					-n|--context|--confdir|--lockfile|--hostname|--netdev|--netbcast|--netmask|--netprefix|--interface|--cpuset|--cpusetcpus|--cpusetmems|--cpusetvirt|--initstyle|--flags)
 						COMPREPLY=( $( compgen -W "" -- $cur ) )
@@ -168,19 +177,18 @@ _vserver() {
 						COMPREPLY=( $( compgen -W "$cmdMethodOpts" -- $cur ) )
 						;;
 				esac
+                
 			else
 				COMPREPLY=( $( compgen -W "build" -- $cur ) )
 			fi
 		else
 			COMPREPLY=( $( compgen -W "${names[@]} $cmdOpts" -- $cur ) )
 		fi
-
 		return 0
 	fi
 
 	return 0
 }
-
 complete -F _vserver vserver
 
 _vapt_rpm_yum()
@@ -195,7 +203,6 @@ _vapt_rpm_yum()
 
 	# if the previous option is a single option
 	helpCmds='--help|--version'
-
 	if [[ "${COMP_WORDS[1]}" == "@($helpCmds)" ]] ; then
 		return 0
 	fi
@@ -203,12 +210,12 @@ _vapt_rpm_yum()
 	# search --
 	for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
 		if [[ ${COMP_WORDS[i]} = "--" ]] ; then
-			# found it!
+            # it's found
 			break
 		fi
 	done
 
-	# find available vServers
+    # find available v-servers: 
 	# call function getAllVservers in vserver library
 	getAllVservers names
 	names_pipe=`echo ${names[@]}" --all" | sed 's/ /|/g'`
@@ -219,10 +226,10 @@ _vapt_rpm_yum()
 		COMP_CWORD=$((COMP_CWORD-i))
 		declare -f _${func//-/_} > /dev/null && _${func//-/_}
 	else
-		# search vServer name
+        # search a verser's name
 		for (( i=0; i <  ${#COMP_WORDS[@]}-1; i++ )) ; do
 			if [[ ${COMP_WORDS[i]} == @($names_pipe) ]] ; then
-				# found it!
+                # it's found
 				break
 			fi
 		done
@@ -239,9 +246,11 @@ _vapt_rpm_yum()
 			COMPREPLY=( $( compgen -W "${names[@]} $cmdOpts" -- $cur ) )
 		fi
 	fi
-
 	return 0
 }
+complete -F _vapt_rpm_yum vapt-get
+complete -F _vapt_rpm_yum vrpm
+complete -F _vapt_rpm_yum vyum
 
 _vserver_copy()
 {
@@ -250,7 +259,7 @@ _vserver_copy()
 	COMPREPLY=()
 	cur=${COMP_WORDS[COMP_CWORD]}
 
-	# find available vServers
+    # find available v-servers: 
 	# call function getAllVservers in vserver library
 	getAllVservers names
 	names_pipe=`echo ${names[@]} | sed 's/ /|/g'`
@@ -262,22 +271,20 @@ _vserver_copy()
 
 	# if the previous option is a single option
 	helpCmds='--help|-h|--version|-V'
-
 	if [[ ${COMP_WORDS[1]} == @($helpCmds) ]] ; then
 		return 0
 	fi
 
 	confCmds='--ip|-i|--domain|-d'
 	prev=${COMP_WORDS[COMP_CWORD-1]}
-
 	if [[ $prev == @($confCmds) ]] ; then
 		return 0
 	fi
 
-	# search a vServer name
+    # search a verser's name
 	for (( i=0; i <  ${#COMP_WORDS[@]}-1; i++ )); do
 		if [[ ${COMP_WORDS[i]} == @($names_pipe) ]] ; then
-			# found it!
+            # it's found
 			break
 		fi
 	done
@@ -287,14 +294,10 @@ _vserver_copy()
 	else
 		COMPREPLY=( $( compgen -W "${names[@]} $cmdOpts" -- $cur ) )
 	fi
-
 	return 0
 }
-
-complete -F _vapt_rpm_yum vapt-get
-complete -F _vapt_rpm_yum vrpm
-complete -F _vapt_rpm_yum vyum
 complete -F _vserver_copy vserver-copy
 
 }
 }
+

@@ -7,7 +7,6 @@ Release:	0.1
 License:	GPL
 Group:		Applications/Shells
 Source0:	%{name}.sh
-# Source0-md5:	20d9b2d8c50fe0ca9bb381d16daf2d7d
 URL:		http://linux-vserver.org/util-vserver:Bash_Completion
 Requires:	bash-completion
 Requires:	util-vserver

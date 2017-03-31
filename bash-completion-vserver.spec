@@ -3,7 +3,7 @@
 Summary:	bash-completion for vserver command
 Name:		bash-completion-vserver
 Version:	0.4.1
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Shells
 Source0:	%{name}.sh

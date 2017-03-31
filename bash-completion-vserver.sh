@@ -182,7 +182,7 @@ _vserver() {
 				COMPREPLY=( $( compgen -W "build" -- $cur ) )
 			fi
 		else
-			COMPREPLY=( $( compgen -W "${names[@]} $cmdOpts" -- $cur ) )
+			COMPREPLY=( $( compgen -W "${names[*]} $cmdOpts" -- $cur ) )
 		fi
 		return 0
 	fi
@@ -240,10 +240,10 @@ _vapt_rpm_yum()
 				COMPREPLY=( $( compgen -W "$cmdOpts" -- $cur ) )
 			else
 				cmdOpts='--'
-				COMPREPLY=( $( compgen -W "${names[@]} $cmdOpts" -- $cur ) )
+				COMPREPLY=( $( compgen -W "${names[*]} $cmdOpts" -- $cur ) )
 			fi
 		else
-			COMPREPLY=( $( compgen -W "${names[@]} $cmdOpts" -- $cur ) )
+			COMPREPLY=( $( compgen -W "${names[*]} $cmdOpts" -- $cur ) )
 		fi
 	fi
 	return 0
@@ -292,7 +292,7 @@ _vserver_copy()
 	if (( $i < ${#COMP_WORDS[@]}-1 )) ; then
 		return 0
 	else
-		COMPREPLY=( $( compgen -W "${names[@]} $cmdOpts" -- $cur ) )
+		COMPREPLY=( $( compgen -W "${names[*]} $cmdOpts" -- $cur ) )
 	fi
 	return 0
 }
